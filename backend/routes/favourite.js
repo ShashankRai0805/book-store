@@ -1,33 +1,34 @@
 const router = require("express").Router();
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
+const Book = require("../models/books")
 const {authenticateToken} = require("./userAuth")
 
-const mongoose = require("mongoose");
-router.put("/add-book-favourite", authenticateToken, async (req, res) => {
+router.put("/add-book-to-favourite", authenticateToken, async (req, res)=>{
   try {
-    const { bookId } = req.headers;
-    const userId = req.user.id; // get from token
-    const userData = await User.findById(userId);
-
-    // Convert string to ObjectId for comparison
-    const bookObjectId = new mongoose.Types.ObjectId(bookId);
-
-    const isBookFavourite = userData.favourites.some(fav => fav.equals(bookObjectId));
-
-    if (isBookFavourite) {
-      return res.status(200).json({ msg: "Book is already in Favourites" });
+    const bookId = req.headers.bookid
+    console.log(req.headers.bookId)
+    const id = req.headers.id
+    const userData = await User.findById(id);
+    const isBookFavourite = userData.favourites.includes(bookId);
+    if(isBookFavourite){
+      res.status(200).json({
+        msg: "Book already in Fav"
+      })
     }
+    await User.findByIdAndUpdate(id, { $addToSet: { favourites: bookId } });
 
-    await User.findByIdAndUpdate(userId, { $push: { favourites: bookObjectId } });
-
-    return res.status(200).json({ msg: "Book added to favourites" });
-
+    return res.status(200).json({
+      msg: "Book added to favourites"
+    })
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ msg: "Unable to add to favourite" });
+    res.status(500).json({
+      msg: "Internal Server Error",
+      error: error.message
+    })
   }
-});
+})
 
 
-module.exports = router
+
+module.exports = router;

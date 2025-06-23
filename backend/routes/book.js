@@ -33,26 +33,29 @@ router.post("/add-book", authenticateToken, async (req, res)=>{
     }
 })
 
-router.put("/update-book",authenticateToken, async (req, res)=>{
+router.put("/update-book/:id", authenticateToken, async (req, res) => {
     try {
-        const {bookId} = req.headers;
-        await Book.findByIdAndUpdate(bookId, {
-        url: req.body.url,
-        title: req.body.title,
-        author: req.body.author,
-        price: req.body.price,
-        desc: req.body.desc,
-        language: req.body.language
-    })
-    return res.status(200).json({
-        msg: "Book Updated successfully"
-    })
+        const { id } = req.params;
+        const updateFields = {};
+
+        // Only update fields that are present in req.body
+        if (req.body.url !== undefined) updateFields.url = req.body.url;
+        if (req.body.title !== undefined) updateFields.title = req.body.title;
+        if (req.body.author !== undefined) updateFields.author = req.body.author;
+        if (req.body.price !== undefined) updateFields.price = req.body.price;
+        if (req.body.desc !== undefined) updateFields.desc = req.body.desc;
+        if (req.body.language !== undefined) updateFields.language = req.body.language;
+
+        await Book.findByIdAndUpdate(id, updateFields);
+        return res.status(200).json({
+            msg: "Book Updated successfully"
+        });
     } catch (error) {
         res.status(500).json({
             msg: "An error occured while updating the book"
-        })
+        });
     }
-})
+});
 
 router.delete("/delete-book", authenticateToken, (req, res)=>{
     try {
