@@ -35,10 +35,17 @@ router.post("/add-book", authenticateToken, async (req, res)=>{
 
 router.put("/update-book/:id", authenticateToken, async (req, res) => {
     try {
-        const { id } = req.params;
-        const updateFields = {};
+        const { id: bookId } = req.params;
+        const { id: userId } = req.headers;
+        
+        const user = await User.findById(userId);
+        if (user.role !== "admin") {
+            return res.status(400).json({
+                msg: "You don't have access to perform admin work"
+            });
+        }
 
-        // Only update fields that are present in req.body
+        const updateFields = {};
         if (req.body.url !== undefined) updateFields.url = req.body.url;
         if (req.body.title !== undefined) updateFields.title = req.body.title;
         if (req.body.author !== undefined) updateFields.author = req.body.author;
@@ -46,30 +53,41 @@ router.put("/update-book/:id", authenticateToken, async (req, res) => {
         if (req.body.desc !== undefined) updateFields.desc = req.body.desc;
         if (req.body.language !== undefined) updateFields.language = req.body.language;
 
-        await Book.findByIdAndUpdate(id, updateFields);
+        await Book.findByIdAndUpdate(bookId, updateFields);
         return res.status(200).json({
             msg: "Book Updated successfully"
         });
     } catch (error) {
+        console.log("Error updating book:", error);
         res.status(500).json({
             msg: "An error occured while updating the book"
         });
     }
 });
 
-router.delete("/delete-book", authenticateToken, (req, res)=>{
+router.delete("/delete-book/:id", authenticateToken, async (req, res) => {
     try {
-        const {bookId} = req.headers;
-        const Book = Book.findByIdAndDelete(bookId);
+        const { id: bookId } = req.params;
+        const { id: userId } = req.headers;
+        
+        const user = await User.findById(userId);
+        if (user.role !== "admin") {
+            return res.status(400).json({
+                msg: "You don't have access to perform admin work"
+            });
+        }
+
+        await Book.findByIdAndDelete(bookId);
         return res.status(200).json({
             msg: "Book deleted successfully"
-        })
+        });
     } catch (error) {
+        console.log("Error deleting book:", error);
         res.status(500).json({
             msg: "Internal Server Error"
-        })
+        });
     }
-})
+});
 
 router.get("/get-all-books", async (req, res)=>{
     try {
