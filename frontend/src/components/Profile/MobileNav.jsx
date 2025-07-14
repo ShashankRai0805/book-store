@@ -10,7 +10,7 @@ const MobileNav = () => {
             {role === "user" && (
                 <div className='w-full flex lg:hidden items-center justify-between mt-4'>
                     <Link
-                        to="/profile"
+                        to="/profile/favourites"
                         className='text-zinc-100 font-semibold w-full py-2 text-center hover:bg-zinc-900 rounded transition-all duration-300'
                     >
                         Favourites
@@ -32,7 +32,7 @@ const MobileNav = () => {
             {role === "admin" && (
                 <div className='w-full flex lg:hidden items-center justify-between mt-4'>
                     <Link
-                        to="/profile"
+                        to="/profile/all-orders"
                         className='text-zinc-100 font-semibold w-full py-2 text-center hover:bg-zinc-900 rounded transition-all duration-300'
                     >
                         All Orders

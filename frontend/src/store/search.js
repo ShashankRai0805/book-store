@@ -30,7 +30,6 @@ const searchSlice = createSlice({
     },
     setAllBooks: (state, action) => {
       state.allBooks = action.payload || [];
-      console.log('All books set in Redux store:', state.allBooks.length);
       
       // If we have a pending search query, run the search now that we have books
       if (state.isSearching && state.query && state.allBooks.length > 0) {
@@ -45,8 +44,6 @@ const searchSlice = createSlice({
           
           return titleMatch || authorMatch || languageMatch;
         });
-        
-        console.log('Re-ran search after books loaded. Filtered books:', state.filteredBooks.length);
       }
     },
     clearSearch: (state) => {
@@ -57,9 +54,6 @@ const searchSlice = createSlice({
     performSearch: (state, action) => {
       const query = action.payload.trim();
       state.query = query;
-      
-      console.log('Search action dispatched with query:', query);
-      console.log('Available books:', state.allBooks.length);
       
       if (query.length > 0) {
         state.isSearching = true;
@@ -74,15 +68,9 @@ const searchSlice = createSlice({
             const authorMatch = book.author && book.author.toLowerCase().includes(searchTerm);
             const languageMatch = book.language && book.language.toLowerCase().includes(searchTerm);
             
-            console.log(`Checking book: ${book.title} - Title match: ${titleMatch}, Author match: ${authorMatch}, Language match: ${languageMatch}`);
-            
             return titleMatch || authorMatch || languageMatch;
           });
-          
-          console.log('Filtered books after search:', state.filteredBooks.length);
-          console.log('Filtered books:', state.filteredBooks);
         } else {
-          console.log('No books available for search yet - search will be performed when books load');
           state.filteredBooks = [];
         }
       } else {

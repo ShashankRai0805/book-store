@@ -13,25 +13,12 @@ const Cart = () => {
     const [error, setError] = useState(null);
     const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
 
-    // Debug info
-    console.log("=== CART COMPONENT DEBUG ===");
-    console.log("isLoggedIn from Redux:", isLoggedIn);
-    console.log("token from localStorage:", localStorage.getItem("token"));
-    console.log("id from localStorage:", localStorage.getItem("id"));
-    console.log("role from localStorage:", localStorage.getItem("role"));
-    console.log("============================");
-
     useEffect(() => {
         // Check both Redux state and localStorage for authentication
         const token = localStorage.getItem("token");
         const userId = localStorage.getItem("id");
         
-        console.log("Cart - isLoggedIn:", isLoggedIn);
-        console.log("Cart - token from localStorage:", token);
-        console.log("Cart - userId from localStorage:", userId);
-        
         if (!isLoggedIn && (!token || !userId)) {
-            console.log("Cart - Redirecting to login");
             navigate("/login");
             return;
         }
@@ -40,11 +27,8 @@ const Cart = () => {
             try {
                 setLoading(true);
                 setError(null);
-                console.log("Fetching cart data...");
                 
                 const response = await API.get("/get-user-cart");
-                console.log("Cart response:", response.data);
-                
                 setCart(response.data.data || []);
             } catch (error) {
                 console.error("Error fetching cart:", error);
@@ -93,7 +77,6 @@ const Cart = () => {
     };
 
     const shouldRedirect = !isLoggedIn && (!localStorage.getItem("token") || !localStorage.getItem("id"));
-    console.log("Cart render - shouldRedirect:", shouldRedirect);
     
     if (shouldRedirect) {
         return null;

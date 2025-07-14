@@ -14,18 +14,14 @@ const AllBooks = () => {
     
     // Determine what books to display
     const booksToDisplay = isSearching ? filteredBooks : data;
-    
-    console.log('AllBooks - isSearching:', isSearching, 'query:', query, 'filteredBooks:', filteredBooks.length, 'data:', data.length);
 
     useEffect(() => {
         const fetchBooks = async () => {
             try {
                 setLoading(true);
                 const response = await API.get("/get-all-books");
-                console.log('Fetched books in AllBooks:', response.data.data);
                 setData(response.data.data);
                 dispatch(setAllBooks(response.data.data));
-                console.log('Books set in Redux store from AllBooks');
             } catch (error) {
                 console.error("Error fetching books:", error);
             } finally {

@@ -82,7 +82,7 @@ const Navbar = () => {
         localStorage.removeItem("id");
         localStorage.removeItem("token");
         localStorage.removeItem("role");
-        navigate("/");
+        navigate("/login");
     };
 
     if (isLoggedIn === false) {

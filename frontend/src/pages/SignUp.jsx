@@ -39,8 +39,17 @@ const SignUp = () => {
     };
 
     return (
-        <div className='min-h-screen bg-zinc-900 px-4 md:px-8 lg:px-12 py-6 md:py-8 flex items-center justify-center'>
-            <div className='bg-zinc-800 rounded-lg px-4 md:px-6 lg:px-8 py-6 md:py-8 w-full max-w-md md:max-w-lg lg:max-w-xl'>
+        <div className='min-h-screen bg-zinc-900 px-4 md:px-8 lg:px-12 py-6 md:py-8 flex flex-col'>
+            {/* Simple Header */}
+            <div className='mb-6 md:mb-8'>
+                <Link to="/" className='flex items-center justify-center'>
+                    <img className='h-8 md:h-10 me-2 md:me-4' src="https://cdn-icons-png.flaticon.com/128/10433/10433049.png" alt="logo" />
+                    <h1 className='text-lg md:text-2xl font-semibold text-white'>BookHeaven</h1>
+                </Link>
+            </div>
+            
+            <div className='flex-1 flex items-center justify-center'>
+                <div className='bg-zinc-800 rounded-lg px-4 md:px-6 lg:px-8 py-6 md:py-8 w-full max-w-md md:max-w-lg lg:max-w-xl'>
                 <p className='text-zinc-200 text-xl md:text-2xl lg:text-3xl font-semibold text-center'>Sign Up</p>
                 <div className='mt-4 md:mt-6'>
                     <label htmlFor="username" className='text-zinc-400 text-sm md:text-base'>
@@ -116,6 +125,7 @@ const SignUp = () => {
                         Login
                     </Link>
                 </p>
+                </div>
             </div>
         </div>
     );

@@ -14,7 +14,7 @@ const Sidebar = ({ data }) => {
         localStorage.removeItem("id");
         localStorage.removeItem("token");
         localStorage.removeItem("role");
-        navigate("/");
+        navigate("/login");
     };
 
     return (
@@ -32,7 +32,7 @@ const Sidebar = ({ data }) => {
             {role === "user" && (
                 <div className='w-full flex-col items-center justify-center hidden lg:flex'>
                     <Link
-                        to="/profile"
+                        to="/profile/favourites"
                         className='text-zinc-100 font-semibold w-full py-2 text-center hover:bg-zinc-900 rounded transition-all duration-300'
                     >
                         Favourites
@@ -55,7 +55,7 @@ const Sidebar = ({ data }) => {
             {role === "admin" && (
                 <div className='w-full flex-col items-center justify-center hidden lg:flex'>
                     <Link
-                        to="/profile"
+                        to="/profile/all-orders"
                         className='text-zinc-100 font-semibold w-full py-2 text-center hover:bg-zinc-900 rounded transition-all duration-300'
                     >
                         All Orders
