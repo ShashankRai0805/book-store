@@ -36,7 +36,7 @@ router.post("/add-book", authenticateToken, async (req, res)=>{
 router.put("/update-book/:id", authenticateToken, async (req, res) => {
     try {
         const { id: bookId } = req.params;
-        const { id: userId } = req.headers;
+         const { id: userId } = req.headers;
         
         const user = await User.findById(userId);
         if (user.role !== "admin") {

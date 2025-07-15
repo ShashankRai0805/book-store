@@ -61,14 +61,14 @@ router.put("/add-to-cart", authenticateToken, async (req, res)=>{
     }
 });
 
-router.put("/remove-from-cart/:bookId", authenticateToken, async (req, res)=>{
+router.put("/remove-from-cart/:bookid", authenticateToken, async (req, res)=>{
     try {
-        const {bookId} = req.params;
+        const {bookid} = req.params;
         const {id} = req.headers;
         
-        console.log("Remove from cart - User ID:", id, "Book ID:", bookId);
+        console.log("Remove from cart - User ID:", id, "Book ID:", bookid);
         
-        await User.findByIdAndUpdate(id, {$pull: {cart: bookId}});
+        await User.findByIdAndUpdate(id, {$pull: {cart: bookid}});
         
         return res.status(200).json({
             msg: "Book removed from cart"
