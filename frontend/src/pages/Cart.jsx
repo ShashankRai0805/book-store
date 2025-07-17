@@ -66,12 +66,22 @@ const Cart = () => {
 
     const placeOrder = async () => {
         try {
+            console.log("=== PLACING ORDER ===");
+            console.log("Cart contents:", cart);
+            
             const orderData = cart.map(book => ({_id: book._id}));
+            console.log("Order data to send:", orderData);
+            console.log("User ID:", localStorage.getItem("id"));
+            console.log("Token:", localStorage.getItem("token"));
+            
             const response = await API.post("/place-order", {order: orderData});
+            console.log("Place order response:", response.data);
+            
             alert(response.data.msg);
             navigate("/profile/order-history");
         } catch (error) {
             console.error("Error placing order:", error);
+            console.error("Error details:", error.response?.data);
             alert("Failed to place order");
         }
     };

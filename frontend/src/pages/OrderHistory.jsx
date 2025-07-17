@@ -11,10 +11,19 @@ const OrderHistory = () => {
         const fetch = async () => {
             try {
                 setLoading(true);
+                console.log("=== FETCHING ORDER HISTORY ===");
+                console.log("User token:", localStorage.getItem("token"));
+                console.log("User ID:", localStorage.getItem("id"));
+                
                 const response = await API.get("/get-order-history");
-                setOrderHistory(response.data.data);
+                console.log("Order history response:", response.data);
+                console.log("Order data:", response.data.data);
+                console.log("Number of orders:", response.data.data?.length || 0);
+                
+                setOrderHistory(response.data.data || []);
             } catch (error) {
                 console.error("Error fetching order history:", error);
+                console.error("Error details:", error.response?.data);
             } finally {
                 setLoading(false);
             }

@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { FaHeart, FaShoppingCart } from 'react-icons/fa';
 import API from '../../api';
 
-const BookCard = ({ data, favourite }) => {
+const BookCard = ({ data, favourite, onFavouriteRemove }) => {
     const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
     const role = useSelector((state) => state.auth.role);
     
@@ -16,13 +16,19 @@ const BookCard = ({ data, favourite }) => {
 
     const handleFavourite = async () => {
         try {
-            const response = await API.put("/add-book-to-favourite", {}, {
+            const endpoint = favourite ? "/remove-book-from-favourite" : "/add-book-to-favourite";
+            const response = await API.put(endpoint, {}, {
                 headers: headers
             });
             alert(response.data.msg);
+            
+            // If this is a favourite page and we're removing, trigger a refresh
+            if (favourite && onFavouriteRemove) {
+                onFavouriteRemove(data._id);
+            }
         } catch (error) {
-            console.error("Error adding to favourites:", error);
-            alert("Failed to add to favourites");
+            console.error("Error updating favourites:", error);
+            alert(favourite ? "Failed to remove from favourites" : "Failed to add to favourites");
         }
     };
 
@@ -70,10 +76,10 @@ const BookCard = ({ data, favourite }) => {
                     <div className="flex gap-2 mt-3">
                         <button
                             onClick={handleFavourite}
-                            className="flex-1 bg-zinc-700 hover:bg-red-600 text-zinc-300 hover:text-white p-2 rounded flex items-center justify-center gap-2 transition-all duration-300 text-sm"
+                            className={`flex-1 ${favourite ? 'bg-red-600 hover:bg-red-700' : 'bg-zinc-700 hover:bg-red-600'} text-zinc-300 hover:text-white p-2 rounded flex items-center justify-center gap-2 transition-all duration-300 text-sm`}
                         >
                             <FaHeart className="text-xs" />
-                            <span>Fav</span>
+                            <span>{favourite ? 'Remove' : 'Fav'}</span>
                         </button>
                         <button
                             onClick={handleCart}

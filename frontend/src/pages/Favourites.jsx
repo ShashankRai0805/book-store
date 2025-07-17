@@ -22,22 +22,35 @@ const Favourites = () => {
         fetch();
     }, []);
 
+    const handleFavouriteRemove = (bookId) => {
+        // Remove the book from the favourites list
+        setFavouriteBooks(prevBooks => prevBooks.filter(book => book._id !== bookId));
+    };
+
     return (
         <>
-            {favouriteBooks.length === 0 && (
+            {loading ? (
+                <div className="text-zinc-500 flex items-center justify-center w-full h-[100%]">
+                    Loading favourites...
+                </div>
+            ) : favouriteBooks.length === 0 ? (
                 <div className="text-5xl font-semibold text-zinc-500 flex flex-col items-center justify-center w-full h-[100%]">
                     <FaHeart className="mb-4" />
                     No Favourite Books
                 </div>
-            )}
-            <div className='grid grid-cols-3 gap-4'>
-                {favouriteBooks &&
-                    favouriteBooks.map((items, i) => (
+            ) : (
+                <div className='grid grid-cols-3 gap-4'>
+                    {favouriteBooks.map((items, i) => (
                         <div key={i}>
-                            <BookCard data={items} favourite={true} />
+                            <BookCard 
+                                data={items} 
+                                favourite={true} 
+                                onFavouriteRemove={handleFavouriteRemove}
+                            />
                         </div>
                     ))}
-            </div>
+                </div>
+            )}
         </>
     );
 };

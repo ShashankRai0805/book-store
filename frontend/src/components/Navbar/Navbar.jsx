@@ -245,7 +245,7 @@ const Navbar = () => {
                             }} 
                             className='px-6 py-2 bg-red-500 rounded hover:bg-white hover:text-zinc-800 transition-all duration-300 text-white text-lg font-semibold'
                         >
-                            LogOut
+                            Logout
                         </button>
                     )}
                 </div>

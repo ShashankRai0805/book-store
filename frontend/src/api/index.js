@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { handleAuthError, isAuthError } from '../utils/auth';
 
 const API = axios.create({
   baseURL: 'http://localhost:1000/api/v1',
@@ -19,5 +20,20 @@ API.interceptors.request.use((config) => {
   
   return config;
 });
+
+// Response interceptor to handle token verification errors
+API.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    // Check for authentication errors
+    if (isAuthError(error)) {
+      handleAuthError();
+    }
+    
+    return Promise.reject(error);
+  }
+);
 
 export default API;
