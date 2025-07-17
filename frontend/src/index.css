@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./animations.css";
 
 /* Custom utilities for consistent card layouts */
 .line-clamp-2 {

@@ -6,6 +6,7 @@ import { FaHeart } from "react-icons/fa";
 const Favourites = () => {
     const [favouriteBooks, setFavouriteBooks] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
         const fetch = async () => {
@@ -13,6 +14,8 @@ const Favourites = () => {
                 setLoading(true);
                 const response = await API.get("/get-favourite-books");
                 setFavouriteBooks(response.data.data);
+                // Trigger animation after data loads
+                setTimeout(() => setIsVisible(true), 100);
             } catch (error) {
                 console.error("Error fetching favourite books:", error);
             } finally {
@@ -23,8 +26,16 @@ const Favourites = () => {
     }, []);
 
     const handleFavouriteRemove = (bookId) => {
-        // Remove the book from the favourites list
-        setFavouriteBooks(prevBooks => prevBooks.filter(book => book._id !== bookId));
+        // Add exit animation before removing
+        const cardElement = document.querySelector(`[data-book-id="${bookId}"]`);
+        if (cardElement) {
+            cardElement.style.animation = 'fadeOut 0.3s ease-out forwards';
+            setTimeout(() => {
+                setFavouriteBooks(prevBooks => prevBooks.filter(book => book._id !== bookId));
+            }, 300);
+        } else {
+            setFavouriteBooks(prevBooks => prevBooks.filter(book => book._id !== bookId));
+        }
     };
 
     return (
