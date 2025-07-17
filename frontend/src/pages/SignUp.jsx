@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import API from '../api';
+import { useToast } from '../context/ToastContext';
+import { LoadingOverlay } from '../components/Loading/Loading';
 
 const SignUp = () => {
     const [values, setValues] = useState({
@@ -11,6 +13,7 @@ const SignUp = () => {
     });
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const { showSuccess, showError } = useToast();
 
     const change = (e) => {
         const { name, value } = e.target;
@@ -23,16 +26,16 @@ const SignUp = () => {
             setLoading(true);
             
             if (values.username === "" || values.email === "" || values.password === "" || values.address === "") {
-                alert("All fields are required");
+                showError("All fields are required");
                 setLoading(false);
                 return;
             }
 
             const response = await API.post("/signup", values);
-            alert(response.data.msg);
+            showSuccess(response.data.msg);
             navigate("/login");
         } catch (error) {
-            alert(error.response?.data?.msg || "Signup failed");
+            showError(error.response?.data?.msg || "Signup failed");
         } finally {
             setLoading(false);
         }

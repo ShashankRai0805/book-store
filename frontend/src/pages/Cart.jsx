@@ -4,6 +4,8 @@ import API from '../api';
 import Loader from '../components/Loader/Loader';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { useToast } from '../context/ToastContext';
+import { LoadingButton, LoadingOverlay } from '../components/Loading/Loading';
 
 const Cart = () => {
     const navigate = useNavigate();
@@ -11,7 +13,9 @@ const Cart = () => {
     const [loading, setLoading] = useState(true);
     const [total, setTotal] = useState(0);
     const [error, setError] = useState(null);
+    const [isPlacingOrder, setIsPlacingOrder] = useState(false);
     const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+    const { showSuccess, showError } = useToast();
 
     useEffect(() => {
         // Check both Redux state and localStorage for authentication
@@ -44,13 +48,13 @@ const Cart = () => {
     const deleteItem = async (bookid) => {
         try {
             const response = await API.put(`/remove-from-cart/${bookid}`);
-            alert(response.data.msg);
+            showSuccess(response.data.msg);
             // Refresh cart after deletion
             const cartResponse = await API.get("/get-user-cart");
             setCart(cartResponse.data.data);
         } catch (error) {
             console.error("Error removing item from cart:", error);
-            alert("Failed to remove item from cart");
+            showError("Failed to remove item from cart");
         }
     };
 
@@ -66,6 +70,7 @@ const Cart = () => {
 
     const placeOrder = async () => {
         try {
+            setIsPlacingOrder(true);
             console.log("=== PLACING ORDER ===");
             console.log("Cart contents:", cart);
             
@@ -77,12 +82,14 @@ const Cart = () => {
             const response = await API.post("/place-order", {order: orderData});
             console.log("Place order response:", response.data);
             
-            alert(response.data.msg);
+            showSuccess(response.data.msg);
             navigate("/profile/order-history");
         } catch (error) {
             console.error("Error placing order:", error);
             console.error("Error details:", error.response?.data);
-            alert("Failed to place order");
+            showError("Failed to place order");
+        } finally {
+            setIsPlacingOrder(false);
         }
     };
 
@@ -179,12 +186,14 @@ const Cart = () => {
                             <h2>{cart.length} books</h2> 
                             <h2>₹ {total}</h2>
                         </div>
-                        <button
-                            className='bg-zinc-100 rounded px-4 py-3 flex items-center justify-center w-full text-zinc-800 font-semibold hover:bg-zinc-200 transition-colors'
+                        <LoadingButton
+                            isLoading={isPlacingOrder}
+                            loadingText="Placing Order..."
+                            className='bg-zinc-100 rounded px-4 py-3 flex items-center justify-center w-full text-zinc-800 font-semibold hover:bg-zinc-200 transition-colors disabled:opacity-75'
                             onClick={placeOrder}
                         >
                             Place your order
-                        </button>
+                        </LoadingButton>
                     </div>
                 </div>
             )}

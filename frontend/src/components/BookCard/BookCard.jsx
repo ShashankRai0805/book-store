@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { FaHeart, FaShoppingCart } from 'react-icons/fa';
 import API from '../../api';
+import { useToast } from '../../context/ToastContext';
+import { LoadingButton } from '../Loading/Loading';
 
 const BookCard = ({ data, favourite, onFavouriteRemove }) => {
     const [isLoadingFav, setIsLoadingFav] = useState(false);
@@ -10,6 +12,7 @@ const BookCard = ({ data, favourite, onFavouriteRemove }) => {
     const [imageLoaded, setImageLoaded] = useState(false);
     const [isFavAnimating, setIsFavAnimating] = useState(false);
     
+    const { showSuccess, showError } = useToast();
     const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
     const role = useSelector((state) => state.auth.role);
     
@@ -28,7 +31,8 @@ const BookCard = ({ data, favourite, onFavouriteRemove }) => {
             const response = await API.put(endpoint, {}, {
                 headers: headers
             });
-            alert(response.data.msg);
+            
+            showSuccess(response.data.msg);
             
             // If this is a favourite page and we're removing, trigger a refresh
             if (favourite && onFavouriteRemove) {
@@ -39,7 +43,10 @@ const BookCard = ({ data, favourite, onFavouriteRemove }) => {
             setTimeout(() => setIsFavAnimating(false), 600);
         } catch (error) {
             console.error("Error updating favourites:", error);
-            alert(favourite ? "Failed to remove from favourites" : "Failed to add to favourites");
+            showError(favourite ? 
+                "Unable to remove this book from your favourites. Please try again." : 
+                "Unable to add this book to your favourites. Please try again."
+            );
             setIsFavAnimating(false);
         } finally {
             setIsLoadingFav(false);
@@ -52,10 +59,10 @@ const BookCard = ({ data, favourite, onFavouriteRemove }) => {
             const response = await API.put("/add-to-cart", {}, {
                 headers: headers
             });
-            alert(response.data.msg);
+            showSuccess(response.data.msg);
         } catch (error) {
             console.error("Error adding to cart:", error);
-            alert("Failed to add to cart");
+            showError("Unable to add this book to your cart. Please try again.");
         } finally {
             setIsLoadingCart(false);
         }

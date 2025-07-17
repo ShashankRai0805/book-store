@@ -17,6 +17,7 @@ import OrderHistory from './pages/OrderHistory'
 import Settings from './pages/Settings'
 import AllOrders from './pages/AllOrders'
 import AddBook from './pages/AddBook'
+import { ToastProvider } from './context/ToastContext'
 
 // Layout component to handle conditional navbar rendering
 const Layout = () => {
@@ -66,11 +67,13 @@ const App = () => {
   }, [dispatch]);
 
   return (
-    <div>
-      <Router>
-        <Layout />
-      </Router>
-    </div>
+    <ToastProvider>
+      <div>
+        <Router>
+          <Layout />
+        </Router>
+      </div>
+    </ToastProvider>
   )
 }
 
