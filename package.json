@@ -1,4 +1,10 @@
 {
+  "name": "book-store",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "cd frontend && npm install && npm run build",
+    "start": "cd backend && npm start"
+  },
   "dependencies": {
     "bcrypt": "^6.0.0",
     "jsonwebtoken": "^9.0.2",
