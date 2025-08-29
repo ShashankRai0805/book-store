@@ -27,7 +27,25 @@ app.use("/api/v1", Orders)
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
-    res.json({ status: 'OK', message: 'Server is running' });
+    res.json({ 
+        status: 'OK', 
+        message: 'Server is running',
+        env: {
+            mongoUri: !!process.env.MONGO_URI,
+            jwtSecret: !!process.env.JWT_SECRET,
+            port: process.env.PORT
+        }
+    });
+});
+
+// Debug endpoint to check environment
+app.get('/api/debug', (req, res) => {
+    res.json({
+        env: process.env.NODE_ENV,
+        hasMongoUri: !!process.env.MONGO_URI,
+        hasJwtSecret: !!process.env.JWT_SECRET,
+        port: process.env.PORT
+    });
 });
 
 // For Vercel serverless functions
