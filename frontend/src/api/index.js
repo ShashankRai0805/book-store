@@ -2,7 +2,9 @@ import axios from 'axios';
 import { handleAuthError, isAuthError } from '../utils/auth';
 
 const API = axios.create({
-  baseURL: 'http://localhost:1000/api/v1',
+  baseURL: import.meta.env.PROD 
+    ? '/api/v1'  // For Vercel deployment
+    : 'http://localhost:1000/api/v1',  // For local development
 });
 
 // Request interceptor to add token to headers

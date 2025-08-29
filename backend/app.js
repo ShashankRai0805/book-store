@@ -25,6 +25,18 @@ app.use("/api/v1", Favourite)
 app.use("/api/v1", Cart)
 app.use("/api/v1", Orders)
 
-app.listen(process.env.PORT, ()=>{
-    console.log(`Server started at port ${process.env.PORT}`);
+// Health check endpoint
+app.get('/api/health', (req, res) => {
+    res.json({ status: 'OK', message: 'Server is running' });
 });
+
+// For Vercel serverless functions
+if (process.env.VERCEL) {
+    module.exports = app;
+} else {
+    // For local development
+    const PORT = process.env.PORT || 1000;
+    app.listen(PORT, () => {
+        console.log(`Server started at port ${PORT}`);
+    });
+}
