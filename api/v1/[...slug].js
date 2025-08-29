@@ -1,6 +1,5 @@
 const express = require("express")
 const cors = require("cors")
-const app = express();
 require("dotenv").config();
 
 // Import the database connection
@@ -13,6 +12,8 @@ const Favourite = require("../../backend/routes/favourite")
 const Cart = require("../../backend/routes/cart")
 const Orders = require("../../backend/routes/order")
 
+const app = express();
+
 app.use(cors());
 app.use(express.json());
 
@@ -23,6 +24,7 @@ app.use((req, res, next) => {
     next();
 });
 
+// Mount routes at /api/v1
 app.use("/api/v1", user)
 app.use("/api/v1", Books)
 app.use("/api/v1", Favourite)
@@ -52,5 +54,12 @@ app.get('/api/debug', (req, res) => {
     });
 });
 
-// Export for Vercel
-module.exports = app;
+// Export the handler function for Vercel
+module.exports = (req, res) => {
+    // Ensure the path starts with /api/v1 for the routes to match
+    if (!req.url.startsWith('/api/v1')) {
+        req.url = '/api/v1' + req.url;
+    }
+    
+    return app(req, res);
+};
