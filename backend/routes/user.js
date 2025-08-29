@@ -76,38 +76,57 @@ router.post("/signup", async (req, res)=>{
 })
 
 router.post("/login", async (req, res)=>{
+    console.log("=== LOGIN DEBUG ===");
+    console.log("Request body:", req.body);
+    console.log("==================");
+    
    try {
         const {username, password} = req.body;
         
+        if (!username || !password) {
+            console.log("Missing username or password");
+            return res.status(400).json({
+                msg: "Username and password are required"
+            });
+        }
+        
         const existingUser = await User.findOne({username});
         if(!existingUser){
+            console.log("User not found:", username);
             return res.status(400).json({
                 msg: "Invalid Credentials"
             })
         }
 
-        await bcrypt.compare(password, existingUser.password, (err, data)=>{
-            if(data){
-                const authClaims = [
-                    {name: existingUser.username},
-                    {role: existingUser.role},
-                    {id: existingUser._id}
-                ]
-                const token = jwt.sign({authClaims}, process.env.JWT_SECRET, {expiresIn: "30d"})
-                res.status(200).json({
-                    id: existingUser._id,
-                    role: existingUser.role,
-                    token: token
-                })
-            }else{
-                res.status(400).json({
-                    msg: "Invalid Credentials"
-                })
-            }
-        })
+        console.log("User found, comparing passwords...");
+        const isPasswordValid = await bcrypt.compare(password, existingUser.password);
+        
+        if(isPasswordValid){
+            console.log("Password valid, generating token...");
+            const authClaims = [
+                {name: existingUser.username},
+                {role: existingUser.role},
+                {id: existingUser._id}
+            ]
+            const token = jwt.sign({authClaims}, process.env.JWT_SECRET, {expiresIn: "30d"})
+            console.log("Login successful for user:", existingUser.username);
+            
+            res.status(200).json({
+                id: existingUser._id,
+                role: existingUser.role,
+                token: token
+            })
+        }else{
+            console.log("Invalid password for user:", username);
+            res.status(400).json({
+                msg: "Invalid Credentials"
+            })
+        }
    } catch (error) {
+        console.log("Login error:", error);
         res.status(500).json({
-            msg: "Internal Server Error"
+            msg: "Internal Server Error",
+            error: error.message
         })
    }
 })
